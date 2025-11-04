@@ -1,0 +1,160 @@
+{
+  "name": "Slack-test",
+  "nodes": [
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09QHKALNTG",
+          "mode": "list",
+          "cachedResultName": "test-channel"
+        },
+        "messageType": "block",
+        "blocksUi": "={ \"text\": \"새 이미지가 빌드되었습니다.\", \"blocks\": [ { \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"*✅ Artifact Registry 업로드 완료!*\\n배포하시겠습니까?\" } }, { \"type\": \"actions\", \"elements\": [ { \"type\": \"button\", \"text\": { \"type\": \"plain_text\", \"text\": \"🚀 배포하기\" }, \"style\": \"primary\", \"value\": \"{\\\"action\\\":\\\"deploy\\\",\\\"image\\\":\\\"{{ $json.body.image }}\\\",\\\"service\\\":\\\"{{ $json.body.service }}\\\"}\" }, { \"type\": \"button\", \"text\": { \"type\": \"plain_text\", \"text\": \"🛑 취소\" }, \"style\": \"danger\", \"value\": \"cancel\" } ] } ] }",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        592,
+        2640
+      ],
+      "id": "e5d02055-a587-4a3c-bd74-2d07f4ef163d",
+      "name": "Send a message2",
+      "webhookId": "b85e8545-c381-4826-88f2-c9e0373b446c",
+      "credentials": {
+        "slackApi": {
+          "id": "28Ld5ol5ScuLQfNA",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bc3c9eb3-5798-43f0-845e-90e7765c5091",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        368,
+        2640
+      ],
+      "id": "b682a680-161c-4b95-9e00-d3f53b132457",
+      "name": "Github Action Webhook",
+      "webhookId": "bc3c9eb3-5798-43f0-845e-90e7765c5091"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6cbbb0ec-c364-4a7f-b71f-68ff97e7eb1b",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "=deploy",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        2864
+      ],
+      "id": "da789147-0efb-4f0d-98fe-9fc2fff49e36",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "743e6bf7-853e-4a26-9798-cd78c83e13a8",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        368,
+        2864
+      ],
+      "id": "f0d0035a-1f80-495c-9b79-573e05f47b4a",
+      "name": "Slack Deploy Webhook",
+      "webhookId": "743e6bf7-853e-4a26-9798-cd78c83e13a8"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the Slack payload from the webhook body\nconst payload = JSON.parse($input.first().json.body.payload);\n\n// Extract the button value from the actions array\nconst buttonValue = payload.actions[0].value;\n\n// Parse the JSON string from the button value\nconst parsedData = JSON.parse(buttonValue);\n\n// Return the parsed data with image, service, and action fields\nreturn [{\n  json: {\n    action: parsedData.action,\n    image: parsedData.image,\n    service: parsedData.service\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        2864
+      ],
+      "id": "a1d8b71b-2210-4021-a2f9-7692d7bdc380",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Github Action Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Deploy Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4186bc2e-b9ad-4226-b1f7-e69c24329b66",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f118d8e9e9bca66583b47d1d562fe0913f4429ba6d53b56d4487013c536bf0d1"
+  },
+  "id": "Wi0jPP2wCeqTE8UH",
+  "tags": []
+}
