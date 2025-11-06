@@ -10,7 +10,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        352,
+        368,
         2640
       ],
       "id": "b682a680-161c-4b95-9e00-d3f53b132457",
@@ -19,7 +19,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Parse the Slack payload from the webhook body\nconst payload = JSON.parse($input.first().json.body.payload);\n\n// Extract the button value from the actions array\nconst buttonValue = payload.actions[0].value;\n\n// Handle button value that is either JSON or plain string (e.g.: \"cancel\")\nlet result = {};\nif (typeof buttonValue === 'string' && buttonValue.trim().startsWith('{')) {\n  const parsedData = JSON.parse(buttonValue);\n  result = {\n    action: parsedData.action,\n    image: parsedData.image,\n    service: parsedData.service\n  };\n} else {\n  // Plain value, put as action, others empty\n  result = {\n    action: buttonValue,\n    image: null,\n    service: null\n  };\n}\nreturn [{ json: result }];"
+        "jsCode": "// Parse the Slack payload from the webhook body\nconst payload = JSON.parse($input.first().json.body.payload);\n\n// Extract the button value from the actions array\nconst buttonValue = payload.actions[0].value;\n\n// Parse the JSON string from the button value\nconst parsedData = JSON.parse(buttonValue);\n\n// Return the parsed data with image, service, and action fields\nreturn [{\n  json: {\n    action: parsedData.action,\n    image: parsedData.image,\n    service: parsedData.service\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -74,7 +74,7 @@
           "cachedResultName": "test-channel"
         },
         "messageType": "block",
-        "blocksUi": "={ \"text\": \"새 이미지가 빌드되었습니다.\", \"blocks\": [ { \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"*✅ Artifact Registry 업로드 완료!*\\n배포하시겠습니까?\" } }, \n{ \"type\": \"actions\", \n\"elements\": \n[\n{ \"type\": \"button\", \n\"text\": { \"type\": \"plain_text\", \"text\": \"배포하기\" }, \n\"style\": \"primary\", \n\"value\": \"{\\\"action\\\":\\\"deploy\\\",\\\"image\\\":{{ $json.body.image }},\\\"service\\\":{{ $json.body.service }}}\"\n}, \n{ \"type\": \"button\", \n\"text\": { \"type\": \"plain_text\", \"text\": \"취소\" }, \n\"style\": \"danger\", \n\"value\": \"cancel\" } ] } ] }",
+        "blocksUi": "={ \"text\": \"새 이미지가 빌드되었습니다.\", \"blocks\": [ { \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"*✅ Artifact Registry 업로드 완료!*\\n배포하시겠습니까?\" } }, { \"type\": \"actions\", \"elements\": [ { \"type\": \"button\", \"text\": { \"type\": \"plain_text\", \"text\": \"🚀 배포하기\" }, \"style\": \"primary\", \"value\": \"{\\\"action\\\":\\\"deploy\\\",\\\"image\\\":\\\"{{ $json.body.image }}\\\",\\\"service\\\":\\\"{{ $json.body.service }}\\\"}\" }, { \"type\": \"button\", \"text\": { \"type\": \"plain_text\", \"text\": \"🛑 취소\" }, \"style\": \"danger\", \"value\": \"cancel\" } ] } ] }",
         "otherOptions": {}
       },
       "type": "n8n-nodes-base.slack",
@@ -102,14 +102,14 @@
           "mode": "list",
           "cachedResultName": "test-channel"
         },
-        "text": "배포가 취소되었습니다.",
+        "text": "취소되었습니다.",
         "otherOptions": {}
       },
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.3,
       "position": [
         1072,
-        2976
+        3024
       ],
       "id": "b98e2908-dc94-4a81-9b74-445fa865e4f2",
       "name": "Deploy Canceled",
@@ -157,7 +157,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        352,
+        368,
         2864
       ],
       "id": "f0d0035a-1f80-495c-9b79-573e05f47b4a",
@@ -223,7 +223,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "001612c5-06e4-46cc-b360-591a6398b262",
+  "versionId": "0b475be8-226b-417e-9704-981e7d3b73f9",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f118d8e9e9bca66583b47d1d562fe0913f4429ba6d53b56d4487013c536bf0d1"
