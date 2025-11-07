@@ -10,10 +10,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        1440,
-        2736
+        -48,
+        -64
       ],
-      "id": "7ee82273-260e-4d33-a7d5-dc1cea45fed6",
+      "id": "f8f9c647-c391-4a34-b6f7-bd339c4ddd7e",
       "name": "Github Action Webhook1",
       "webhookId": "bc3c9eb3-5798-43f0-845e-90e7765c5091"
     },
@@ -24,10 +24,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1664,
-        2960
+        192,
+        176
       ],
-      "id": "8f6fef10-3cf6-49ba-9624-ca3382e4e3eb",
+      "id": "155af136-ed9a-4b8a-aefb-2f0634943855",
       "name": "Values: action, image, service1"
     },
     {
@@ -58,10 +58,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1888,
-        2960
+        416,
+        176
       ],
-      "id": "920da9be-b12c-482a-9cd0-a9302dd3d1b6",
+      "id": "eec200cf-799c-4519-899b-b3958264b1ee",
       "name": "If deploy1"
     },
     {
@@ -74,16 +74,16 @@
           "cachedResultName": "test-channel"
         },
         "messageType": "block",
-        "blocksUi": "={ \"text\": \"새 이미지가 빌드되었습니다.\", \"blocks\": [ { \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"*✅ Artifact Registry 업로드 완료!*\\n배포하시겠습니까?\" } }, { \"type\": \"actions\", \"elements\": [ { \"type\": \"button\", \"text\": { \"type\": \"plain_text\", \"text\": \"🚀 배포하기\" }, \"style\": \"primary\", \n\"value\": \"{\\\"action\\\":\\\"deploy\\\",\\\"image\\\":\\\"{{ $json.body.image }}\\\",\\\"service\\\":\\\"{{ $json.body.service }}\\\"}\" }, \n{ \"type\": \"button\", \n\"text\": { \"type\": \"plain_text\", \"text\": \"🛑 취소\" }, \n\"style\": \"danger\", \n\"value\": \"{\\\"action\\\":\\\"cancel\\\",\\\"image\\\":\\\"{{ $json.body.image }}\\\",\\\"service\\\":\\\"{{ $json.body.service }}\\\"}\" } ] } ] }",
+        "blocksUi": "={\n\t\"blocks\": [\n\t\t{\n\t\t\t\"type\": \"section\",\n\t\t\t\"text\": {\n\t\t\t\t\"type\": \"mrkdwn\",\n\t\t\t\t\"text\": \"배포할 새 이미지가 있습니다:\\n*{{ $json.body.image }}*\\n 배포하시겠습니까?\"\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"type\": \"actions\",\n\t\t\t\"elements\": [\n\t\t\t\t{\n\t\t\t\t\t\"type\": \"button\",\n\t\t\t\t\t\"text\": {\n\t\t\t\t\t\t\"type\": \"plain_text\",\n\t\t\t\t\t\t\"emoji\": true,\n\t\t\t\t\t\t\"text\": \"배포\"\n\t\t\t\t\t},\n\t\t\t\t\t\"style\": \"primary\",\n\t\t\t\t\t\"value\": \"{\\\"action\\\":\\\"deploy\\\",\\\"image\\\":\\\"{{ $json.body.image }}\\\",\\\"service\\\":\\\"{{ $json.body.service }}\\\"}\"\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"type\": \"button\",\n\t\t\t\t\t\"text\": {\n\t\t\t\t\t\t\"type\": \"plain_text\",\n\t\t\t\t\t\t\"emoji\": true,\n\t\t\t\t\t\t\"text\": \"카나리 배포\"\n\t\t\t\t\t},\n\t\t\t\t\t\"style\": \"primary\",\n\t\t\t\t\t\"value\": \"{\\\"action\\\":\\\"canary\\\",\\\"image\\\":\\\"{{ $json.body.image }}\\\",\\\"service\\\":\\\"{{ $json.body.service }}\\\"}\"\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"type\": \"button\",\n\t\t\t\t\t\"text\": {\n\t\t\t\t\t\t\"type\": \"plain_text\",\n\t\t\t\t\t\t\"emoji\": true,\n\t\t\t\t\t\t\"text\": \"취소\"\n\t\t\t\t\t},\n\t\t\t\t\t\"style\": \"danger\",\n\t\t\t\t\t\"value\": \"{\\\"action\\\":\\\"cancel\\\",\\\"image\\\":\\\"{{ $json.body.image }}\\\",\\\"service\\\":\\\"{{ $json.body.service }}\\\"}\"\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t]\n}",
         "otherOptions": {}
       },
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.3,
       "position": [
-        1664,
-        2736
+        192,
+        -64
       ],
-      "id": "9a4e1238-02d0-4199-b920-259a4e96ba0c",
+      "id": "c007e3d2-4b6f-4e40-8dfe-767bc1e1826d",
       "name": "send msg with buttons1",
       "webhookId": "b85e8545-c381-4826-88f2-c9e0373b446c",
       "credentials": {
@@ -108,10 +108,10 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.3,
       "position": [
-        2144,
-        3120
+        672,
+        336
       ],
-      "id": "9b3731f3-70a6-41d3-af23-1c28b1f3fdf2",
+      "id": "c457f48f-44cf-4036-b425-1b99b8340495",
       "name": "Deploy Canceled1",
       "webhookId": "60394e16-c6e5-494b-ac04-a53fa7b35637",
       "credentials": {
@@ -130,10 +130,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        1440,
-        2960
+        -48,
+        176
       ],
-      "id": "52da1c21-0a77-4b5f-a703-e8d5e0f2f163",
+      "id": "67bd0b6c-8112-47ad-9853-abc7e756d7b4",
       "name": "Slack Interactive Webhook1",
       "webhookId": "743e6bf7-853e-4a26-9798-cd78c83e13a8"
     },
@@ -142,25 +142,29 @@
         "method": "PATCH",
         "url": "=https://run.googleapis.com/v2/projects/flowing-lead-308309/locations/asia-northeast3/services/{{$json[\"service\"]}}",
         "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "googleApi",
+        "nodeCredentialType": "googleOAuth2Api",
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "Content-Type: application/json",
-        "body": "={\n  \"name\": \"projects/PROJECT_ID/locations/asia-northeast3/services/sample-api\",\n  \"description\": \"Sample service deployed via REST API\",\n  \"labels\": {\n    \"env\": \"prod\",\n    \"team\": \"platform\"\n  },\n  \"ingress\": \"INGRESS_TRAFFIC_ALL\",\n  \"template\": {\n    \"containers\": [\n      {\n        \"image\": \"{{$json[\"image\"]}}\",\n        \"env\": [\n          {\n            \"name\": \"ENV\",\n            \"value\": \"prod\"\n          }\n        ],\n        \"resources\": {\n          \"limits\": {\n            \"cpu\": \"1\",\n            \"memory\": \"512Mi\"\n          }\n        }\n      }\n    ],\n    \"timeout\": \"300s\",\n    \"serviceAccount\": \"my-run-sa@PROJECT_ID.iam.gserviceaccount.com\"\n  },\n  \"traffic\": [\n    {\n      \"percent\": 100,\n      \"latestRevision\": true\n    }\n  ]\n}\n",
+        "body": "={\n  \"template\": {\n    \"containers\": [\n      { \"image\": \"{{ $json.image }}\" }\n    ]\n  }\n}\n",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        2144,
-        2864
+        672,
+        80
       ],
-      "id": "c5d29291-ea42-4cfc-bd24-6387eff18671",
+      "id": "e338298c-e415-4a94-bea1-f4732b1a1e29",
       "name": "GCP Cloud Run RESTAPI",
       "credentials": {
         "googleApi": {
           "id": "0gUZv9mgkR72O1Ne",
           "name": "Google Service Account account"
+        },
+        "googleOAuth2Api": {
+          "id": "insLNfHrwa298yoP",
+          "name": "Google account"
         }
       }
     }
@@ -223,7 +227,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "9a51d566-473e-46a8-b098-2711e63994b8",
+  "versionId": "6556477c-649e-45bd-b883-1e758de46cda",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f118d8e9e9bca66583b47d1d562fe0913f4429ba6d53b56d4487013c536bf0d1"
