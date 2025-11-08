@@ -1,0 +1,489 @@
+{
+  "name": "deploy-webhooks-canary",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "github-actions",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "43d3b054-4ce4-4563-9236-0d3ecd7f2ae4",
+      "name": "Webhook",
+      "webhookId": "db42b9c9-1340-4067-bedc-5e45d3c64799"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09QGMV103V",
+          "mode": "list",
+          "cachedResultName": "project"
+        },
+        "message": "배포를 승인하시겠습니까?",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "disapproveLabel": "Cancel"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "35d9d72f-fb22-48a6-944e-6289ed81258e",
+      "name": "Send a message",
+      "webhookId": "83665bee-c393-4ed6-880e-b7eaa551e277",
+      "credentials": {
+        "slackApi": {
+          "id": "NBvedE22KNVbYPLE",
+          "name": "Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6cbbb0ec-c364-4a7f-b71f-68ff97e7eb1b",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": "={{ $json.data.approved.toString() }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        0
+      ],
+      "id": "798e715b-ff07-4a55-b3f0-64f5db8ecbf3",
+      "name": "If deploy1"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09QHKALNTG",
+          "mode": "list",
+          "cachedResultName": "test-channel"
+        },
+        "text": "취소되었습니다.",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        656,
+        112
+      ],
+      "id": "e671d2c8-497b-4897-b26d-9e2a4956aa2f",
+      "name": "Deploy Canceled1",
+      "webhookId": "60394e16-c6e5-494b-ac04-a53fa7b35637",
+      "credentials": {
+        "slackApi": {
+          "id": "NBvedE22KNVbYPLE",
+          "name": "Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09QGMV103V",
+          "mode": "list",
+          "cachedResultName": "project"
+        },
+        "message": "배포 방식을 선택하세요.",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "Canary",
+            "disapproveLabel": "BlueGreen"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        656,
+        -144
+      ],
+      "id": "9be66114-df16-4995-a017-dcc47c4fd3c6",
+      "name": "Send msg: Canary or BlueGreen",
+      "webhookId": "83665bee-c393-4ed6-880e-b7eaa551e277",
+      "credentials": {
+        "slackApi": {
+          "id": "NBvedE22KNVbYPLE",
+          "name": "Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0248a5cf-12a3-4f03-857e-6872afe53d4f",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        -144
+      ],
+      "id": "beeda5a4-8e15-400e-8131-8955cc239064",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://run.googleapis.com/v2/projects/flowing-lead-308309/locations/asia-northeast3/services/{{$json[\"service\"]}}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "Content-Type: application/json",
+        "body": "={\n  \"name\": \"projects/PROJECT_ID/locations/asia-northeast3/services/sample-api\",\n  \"description\": \"Sample service deployed via REST API\",\n  \"labels\": {\n    \"env\": \"prod\",\n    \"team\": \"platform\"\n  },\n  \"ingress\": \"INGRESS_TRAFFIC_ALL\",\n  \"template\": {\n    \"containers\": [\n      {\n        \"image\": \"{{$json[\"image\"]}}\",\n        \"env\": [\n          {\n            \"name\": \"ENV\",\n            \"value\": \"prod\"\n          }\n        ],\n        \"resources\": {\n          \"limits\": {\n            \"cpu\": \"1\",\n            \"memory\": \"512Mi\"\n          }\n        }\n      }\n    ],\n    \"timeout\": \"300s\",\n    \"serviceAccount\": \"my-run-sa@PROJECT_ID.iam.gserviceaccount.com\"\n  },\n  \"traffic\": [\n    {\n      \"percent\": 100,\n      \"latestRevision\": true\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1024,
+        96
+      ],
+      "id": "7a9f2fdc-96f9-4500-8d49-a7e4114f2af3",
+      "name": "GCP Cloud Run RESTAPI",
+      "credentials": {
+        "googleApi": {
+          "id": "fAdmO2oXgklAzL2O",
+          "name": "Google Service Account account"
+        },
+        "googleOAuth2Api": {
+          "id": "o90CZBDRDIosYRRC",
+          "name": "Google account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://clouddeploy.googleapis.com/v1/projects/infra-477010/locations/asia-northeast3/deliveryPipelines/blueberry-pipeline/releases/{{ $node[\"Webhook\"].json.body.releases[0] }}/rollouts?rolloutId=rollouts-{{ $now.format(\"HHmmss\") }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"targetId\":\"production\"}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1088,
+        -256
+      ],
+      "id": "ba325747-c703-4373-a5ea-7f5a97684ee4",
+      "name": "cloud deploy rollouts create",
+      "credentials": {
+        "googleOAuth2Api": {
+          "id": "o90CZBDRDIosYRRC",
+          "name": "Google account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://clouddeploy.googleapis.com/v1/projects/infra-477010/locations/asia-northeast3/deliveryPipelines/blueberry-pipeline/releases/{{ Object.values($node[\"Webhook\"].json.body.releases)[0] }}/rollouts/{{$node[\"cloud deploy rollouts create\"].json[\"metadata\"][\"target\"].split(\"/\").pop()}}:advance",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"phaseId\": \"stable\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1504,
+        -256
+      ],
+      "id": "38288776-d34b-4612-bf28-4320cefbd813",
+      "name": "cloud run rollouts advance",
+      "credentials": {
+        "googleOAuth2Api": {
+          "id": "o90CZBDRDIosYRRC",
+          "name": "Google account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09QGMV103V",
+          "mode": "list",
+          "cachedResultName": "project"
+        },
+        "text": "=:rocket: *Cloud Deploy 알림*\n- 파이프라인: {{$json.pipeline_id}}\n- 상태: {{$json.state}}\n- 메시지: {{$json.message}}\n- 배포 대상: {{$json.target}}\n- 시각: {{$json.time}}\n",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1488,
+        464
+      ],
+      "id": "56b94f75-d117-4455-81dc-9bc473f8415d",
+      "name": "monitoring-message",
+      "webhookId": "62661251-0a39-458a-94c4-782f05a75e0f",
+      "credentials": {
+        "slackApi": {
+          "id": "NBvedE22KNVbYPLE",
+          "name": "Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pub/Sub → n8n Webhook 구조에서 data 추출\nconst message = $json.body?.message;\n\nif (!message || !message.data) {\n  return { json: { error: \"No data field in $json.body.message\", raw: $json } };\n}\n\n// Base64 → 문자열\nconst decoded = Buffer.from(message.data, 'base64').toString('utf-8');\n\n// 문자열을 JSON으로 파싱\nlet payload;\ntry {\n  payload = JSON.parse(decoded);\n} catch (err) {\n  payload = { raw: decoded };\n}\n\n// 결과를 다음 노드로 넘김\nreturn { json: payload };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        464
+      ],
+      "id": "06060f83-c193-42f3-9ef3-b350c400901e",
+      "name": "decode-message",
+      "alwaysOutputData": true,
+      "notesInFlow": false,
+      "executeOnce": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Function 노드 코드\nreturn [\n  {\n    json: {\n      pipeline_id: $json.resource?.labels?.pipeline_id ?? \"알 수 없음\",\n      state:\n        $json.jsonPayload?.rolloutUpdateType ??\n        $json.jsonPayload?.targetRenderState ??\n        $json.jsonPayload?.releaseRenderState ??\n        \"상태 없음\",\n      message: $json.jsonPayload?.message ?? \"메시지 없음\",\n      target: $json.jsonPayload?.targetId ?? \"N/A\",\n      time: new Date(Date.now() + 9 * 60 * 60 * 1000).toLocaleString(\"ko-KR\"),\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1296,
+        464
+      ],
+      "id": "b9608f74-e402-4099-8444-e5a337cc8959",
+      "name": "make-message-field"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "deploy-logs-test",
+        "responseMode": "streaming",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        880,
+        464
+      ],
+      "id": "5562756a-d28a-4e25-b528-f7c9a9a0c447",
+      "name": "monitoring-logs-sub1",
+      "webhookId": "d26c126f-645e-404f-ab21-21a2a37adcae"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1296,
+        -256
+      ],
+      "id": "cad48af1-e3bd-4d35-8d0e-dd1be96fe16f",
+      "name": "Wait",
+      "webhookId": "cca2076b-6926-4ea2-a647-49e41f063782"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "If deploy1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If deploy1": {
+      "main": [
+        [
+          {
+            "node": "Send msg: Canary or BlueGreen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Deploy Canceled1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send msg: Canary or BlueGreen": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "cloud deploy rollouts create",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cloud deploy rollouts create": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "decode-message": {
+      "main": [
+        [
+          {
+            "node": "make-message-field",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "make-message-field": {
+      "main": [
+        [
+          {
+            "node": "monitoring-message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "monitoring-logs-sub1": {
+      "main": [
+        [
+          {
+            "node": "decode-message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "cloud run rollouts advance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f1e61fb4-3b1f-4545-a76c-feaa88f04f23",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e5b5e94c96d79c7bfa7f65410f915fee564eae48eeb70ade2ffe39915e3ef3e3"
+  },
+  "id": "WHKoH5DmNGNSNQFd",
+  "tags": []
+}
